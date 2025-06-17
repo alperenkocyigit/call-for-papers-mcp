@@ -112,5 +112,4 @@ python3 app.py "ai agent" 3
 ```
 
 ## License
-
-MIT
+This project is licensed under the GNU(GENERAL PUBLIC LICENSE) v3 - see the [LICENSE](LICENSE) file for details.
