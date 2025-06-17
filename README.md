@@ -25,12 +25,18 @@ A JSON object with the following properties:
 - `status`: Status of the operation (success/error)
 - `count`: Number of events found
 - `events`: Array of conference events, each containing:
-  - `event_name`: Name of the conference
-  - `event_description`: Description of the conference
-  - `event_time`: Date and time of the conference
-  - `event_location`: Location of the conference
-  - `deadline`: Submission deadline
-  - `event_link`: Link to the conference page on WikiCFP
+  - `name`: Name of the conference
+  - `title`: Title of the conference
+  - `when`: Date and time of the conference
+  - `where`: Location of the conference
+  - `submission_deadline`: Submission deadline
+  - `notification_due`: Notification due date (if available)
+  - `wikicfp_link`: Link to the conference page on WikiCFP
+  - `external_link`: External conference website URL (if available)
+  - `related_resources`: Array of related conferences/resources (if available), each containing:
+    - `name`: Name of the related resource
+    - `title`: Title of the related resource
+    - `url`: WikiCFP URL to the related resource
 
 ## License
 
