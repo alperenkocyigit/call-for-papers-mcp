@@ -129,7 +129,11 @@ class WikiCFPScraper:
             # Get additional details from event detail page
             event_details = self._get_event_details(event_link)
             
+            # Extract event ID from WikiCFP URL
+            event_id = self._extract_event_id(event_link)
+            
             result = {
+                "id": event_id,
                 "name": event_name,
                 "title": title,
                 "when": event_time,
@@ -237,6 +241,21 @@ class WikiCFPScraper:
         except Exception as e:
             print(f"Error getting event details from {event_url}: {e}")
             return {}
+    
+    def _extract_event_id(self, wikicfp_url: str) -> str:
+        """Extract event ID from WikiCFP URL"""
+        if not wikicfp_url:
+            return ""
+        
+        try:
+            # URL format: http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=188218&copyownerid=193501
+            if 'eventid=' in wikicfp_url:
+                event_id = wikicfp_url.split('eventid=')[1].split('&')[0]
+                return event_id
+        except:
+            pass
+        
+        return ""
 
 def getEvents(keywords: str, limit: Optional[int] = None) -> Dict[str, Any]:
     """
