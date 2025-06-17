@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/alperenkocyigit-call-for-papers-mcp-badge.png)](https://mseep.ai/app/alperenkocyigit-call-for-papers-mcp)
+
 # Call For Papers MCP
 
 A Smithery MCP for searching academic conferences and events from WikiCFP.
