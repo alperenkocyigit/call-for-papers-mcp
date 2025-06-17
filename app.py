@@ -99,10 +99,10 @@ class WikiCFPScraper:
                 event_name = name_cell.text.strip()
                 event_link = ''
             
-            # Second cell of first row usually contains conference description
-            conference_description = ""
+            # Second cell of first row usually contains conference title
+            conference_title = ""
             if len(first_cells) > 1:
-                conference_description = first_cells[1].text.strip()
+                conference_title = first_cells[1].text.strip()
             
             # From second row: date, location and deadline
             second_cells = second_row.find_all('td')
@@ -116,29 +116,146 @@ class WikiCFPScraper:
                 event_location = second_cells[1].text.strip()
                 deadline = second_cells[2].text.strip()
             
-            # Create description
-            description = conference_description
-            if not description:
-                description_parts = []
+            # Create title
+            title = conference_title
+            if not title:
+                title_parts = []
                 if event_location:
-                    description_parts.append(f"Location: {event_location}")
+                    title_parts.append(f"Location: {event_location}")
                 if deadline:
-                    description_parts.append(f"Deadline: {deadline}")
-                description = " | ".join(description_parts) if description_parts else "Conference"
+                    title_parts.append(f"Deadline: {deadline}")
+                title = " | ".join(title_parts) if title_parts else "Conference"
             
-            return {
-                "event_name": event_name,
-                "event_description": conference_description,
-                "event_time": event_time,
-                "event_location": event_location,
-                "deadline": deadline,
-                "description": description,
-                "event_link": event_link
+            # Get additional details from event detail page
+            event_details = self._get_event_details(event_link)
+            
+            # Extract event ID from WikiCFP URL
+            event_id = self._extract_event_id(event_link)
+            
+            result = {
+                "id": event_id,
+                "name": event_name,
+                "title": title,
+                "when": event_time,
+                "where": event_location,
+                "submission_deadline": deadline,
+                "notification_due": event_details.get('notification_due', ''),
+                "wikicfp_link": event_link
             }
+            
+            # Add additional details if available
+            if event_details:
+                result.update(event_details)
+            
+            return result
             
         except Exception as e:
             print(f"Parse error: {e}")
             return None
+    
+    def _get_event_details(self, event_url: str) -> Dict:
+        """Get additional details from event detail page"""
+        if not event_url:
+            return {}
+        
+        try:
+            response = requests.get(event_url, headers=self.headers)
+            if response.status_code != 200:
+                return {}
+            
+            soup = BeautifulSoup(response.text, 'html.parser')
+            details = {}
+            
+            # Extract external event link (Link: https://...)
+            # Find td element containing "Link:" text and an anchor tag
+            for td in soup.find_all('td'):
+                td_text = td.get_text(strip=True)
+                if 'Link:' in td_text:
+                    link_a = td.find('a')
+                    if link_a and link_a.get('href'):
+                        details['external_link'] = link_a.get('href').strip()
+                        break
+            
+            # Extract Notification Due date
+            notification_cell = soup.find('th', string='Notification Due')
+            if notification_cell:
+                notification_td = notification_cell.find_next('td')
+                if notification_td:
+                    details['notification_due'] = notification_td.get_text().strip()
+            
+            # Extract Related Resources
+            related_resources_h3 = soup.find('h3', string=lambda text: text and 'Related Resources' in text)
+            if related_resources_h3:
+                related_resources = []
+                seen_urls = set()  # Track URLs to avoid duplicates
+                
+                # Find the table containing related resources
+                related_table = related_resources_h3.find_next('table')
+                if related_table:
+                    for tr in related_table.find_all('tr'):
+                        td = tr.find('td')
+                        if td:
+                            # Find all direct links in this td
+                            links = td.find_all('a', href=True)
+                            for link in links:
+                                resource_name = link.get_text().strip()
+                                resource_href = link.get('href', '')
+                                resource_url = self.base_url + resource_href
+                                
+                                # Skip if we've already seen this URL
+                                if resource_url in seen_urls:
+                                    continue
+                                seen_urls.add(resource_url)
+                                
+                                # Get the title/description that comes after the link
+                                # Look for text immediately following the link
+                                resource_description = ""
+                                next_sibling = link.next_sibling
+                                if next_sibling and hasattr(next_sibling, 'strip'):
+                                    resource_description = next_sibling.strip()
+                                
+                                # If no description from sibling, try to get from parent but clean it
+                                if not resource_description:
+                                    # Get the text content up to the next <br> or link
+                                    link_parent = link.parent
+                                    if link_parent:
+                                        full_text = link_parent.get_text()
+                                        # Extract only the part after current link name
+                                        if resource_name in full_text:
+                                            parts = full_text.split(resource_name, 1)
+                                            if len(parts) > 1:
+                                                resource_description = parts[1].split('\n')[0].strip()
+                                
+                                if resource_name and resource_url:
+                                    related_resources.append({
+                                        'name': resource_name,
+                                        'title': resource_description,
+                                        'url': resource_url
+                                    })
+                
+                if related_resources:
+                    details['related_resources'] = related_resources
+            
+            return details
+            
+        except Exception as e:
+            print(f"Error getting event details from {event_url}: {e}")
+            return {}
+    
+    def _extract_event_id(self, wikicfp_url: str) -> str:
+        """Extract event ID from WikiCFP URL"""
+        if not wikicfp_url:
+            return ""
+        
+        try:
+            # URL format: http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=188218&copyownerid=193501
+            if 'eventid=' in wikicfp_url:
+                event_id = wikicfp_url.split('eventid=')[1].split('&')[0]
+                return event_id
+        except:
+            pass
+        
+        return ""
 
 def getEvents(keywords: str, limit: Optional[int] = None) -> Dict[str, Any]:
     """
