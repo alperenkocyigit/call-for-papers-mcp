@@ -127,13 +127,12 @@ class WikiCFPScraper:
                 description = " | ".join(description_parts) if description_parts else "Conference"
             
             return {
-                "event_name": event_name,
-                "event_description": conference_description,
-                "event_time": event_time,
-                "event_location": event_location,
-                "deadline": deadline,
+                "name": event_name,
                 "description": description,
-                "event_link": event_link
+                "when": event_time,
+                "where": event_location,
+                "deadline": deadline,
+                "wikicfp_link": event_link
             }
             
         except Exception as e:
