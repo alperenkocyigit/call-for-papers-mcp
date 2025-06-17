@@ -1,4 +1,5 @@
-[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/alperenkocyigit-call-for-papers-mcp-badge.png)](https://mseep.ai/app/alperenkocyigit-call-for-papers-mcp)
+[![Verified on MseeP](https://mseep.ai/badge.svg)](https://mseep.ai/app/090f67e7-6918-449f-963e-c9ef31dc2aa9)
+[![smithery badge](https://smithery.ai/badge/@alperenkocyigit/call-for-papers-mcp)](https://smithery.ai/server/@alperenkocyigit/call-for-papers-mcp)
 
 # Call For Papers MCP
 
