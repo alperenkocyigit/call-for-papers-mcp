@@ -140,7 +140,8 @@ class WikiCFPScraper:
                 "where": event_location,
                 "submission_deadline": deadline,
                 "notification_due": event_details.get('notification_due', ''),
-                "wikicfp_link": event_link
+                "wikicfp_link": event_link,
+                "description": event_details.get('description', ''),
             }
             
             # Add additional details if available
@@ -235,6 +236,16 @@ class WikiCFPScraper:
                 
                 if related_resources:
                     details['related_resources'] = related_resources
+            
+            # Extract Call For Papers description from div.cfp
+            cfp_div = soup.find('div', class_='cfp')
+            if cfp_div:
+                # Get all text content and clean it
+                cfp_text = cfp_div.get_text(separator=' ', strip=True)
+                if cfp_text:
+                    # Clean up extra whitespace
+                    cfp_text = ' '.join(cfp_text.split())
+                    details['description'] = cfp_text
             
             return details
             

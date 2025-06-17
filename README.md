@@ -1,9 +1,12 @@
 [![Verified on MseeP](https://mseep.ai/badge.svg)](https://mseep.ai/app/090f67e7-6918-449f-963e-c9ef31dc2aa9)
+[![Lıcense](https://img.shields.io/github/license/alperenkocyigit/call-for-papers-mcp)](LICENSE)
 [![smithery badge](https://smithery.ai/badge/@alperenkocyigit/call-for-papers-mcp)](https://smithery.ai/server/@alperenkocyigit/call-for-papers-mcp)
+[![star badge](https://img.shields.io/github/stars/alperenkocyigit/call-for-papers-mcp)](https://github.com/alperenkocyigit/call-for-papers-mcp/stargazers)
 
 # Call For Papers MCP
 
 A Smithery MCP for searching academic conferences and events from WikiCFP.
+
 
 ## Description
 
@@ -32,6 +35,7 @@ A JSON object with the following properties:
   - `submission_deadline`: Submission deadline
   - `notification_due`: Notification due date (if available)
   - `wikicfp_link`: Link to the conference page on WikiCFP
+  - `description`: Description text for call
   - `external_link`: External conference website URL (if available)
   - `related_resources`: Array of related conferences/resources (if available), each containing:
     - `name`: Name of the related resource
@@ -57,6 +61,7 @@ python3 app.py "ai agent" 3
       "submission_deadline": "Aug 1, 2028",
       "notification_due": "Sep 1, 2028",
       "wikicfp_link": "http://www.wikicfp.com/cfp/servlet/event.showcfp?eventid=188218&copyownerid=193501",
+      "description": "We invite submissions that explore how core advancements in artificial intelligence are accelerating progress in science. This call focuses on transformative AI innovations that enable new modes of inquiry, hypothesis generation, and experimentation across scientific disciplines. We especially welcome work in the following areas: Foundational Models.......",
       "external_link": "https://aias2025.org/",
       "related_resources": [
         {
