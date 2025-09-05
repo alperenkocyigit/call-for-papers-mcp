@@ -9,5 +9,7 @@ startCommand:
     dockerfile: Dockerfile
     env:
       TRANSPORT: "http"
+      PYTHONOPTIMIZE: "1"
+      PYTHONUNBUFFERED: "1"
     port: 8000
   exampleConfig: {}
